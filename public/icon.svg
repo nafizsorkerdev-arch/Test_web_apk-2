@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="nfxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a6cf0"/>
+      <stop offset="100%" stop-color="#4b3fd8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#nfxGrad)"/>
+  <path d="M120 390V122h84l138 184V122h50v268h-78L170 200v190z" fill="#ffffff"/>
+</svg>

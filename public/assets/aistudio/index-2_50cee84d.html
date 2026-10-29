@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#f2f2f7">
+<title>NFX STUDIO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<style>
+:root{
+  --bg:#f2f2f7;--card:#fff;--text:#000;--sub:rgba(60,60,67,.6);--line:rgba(60,60,67,.18);--chev:rgba(60,60,67,.3);
+  --blue:#007aff;--fill:rgba(120,120,128,.12);--gray:#8e8e93;--bar:rgba(249,249,251,.86);--press:rgba(60,60,67,.08);
+  --modal:#f2f2f7;--grp:#fff;--red:#ff3b30;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#000;--card:#1c1c1e;--text:#fff;--sub:rgba(235,235,245,.6);--line:rgba(84,84,88,.6);--chev:rgba(235,235,245,.3);
+  --blue:#0a84ff;--fill:rgba(120,120,128,.24);--gray:#8e8e93;--bar:rgba(22,22,24,.86);--press:rgba(255,255,255,.08);
+  --modal:#1c1c1e;--grp:#2c2c2e;--red:#ff453a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Inter,Roboto,"Segoe UI","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior-y:none;transition:background .3s,color .3s}
+button{font-family:inherit;color:inherit}
+input,textarea{font-family:inherit;color:inherit;-webkit-user-select:text;user-select:text}
+svg{display:block}
+.ic{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.press{transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .3s}
+.press:active{transform:scale(.95);opacity:.85;transition-duration:.1s}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.app{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 68px) 16px calc(env(safe-area-inset-bottom,0px) + 96px)}
+.page{display:none;animation:fade .3s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* top bar */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;padding-top:env(safe-area-inset-top,0px);border-bottom:.5px solid transparent;transition:background .25s,border-color .25s}
+.nav.scrolled,.nav.solid{background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-bottom-color:var(--line)}
+.nav-in{max-width:480px;margin:0 auto;height:60px;padding:0 76px 0 20px;display:flex;align-items:center;justify-content:flex-start;position:relative}
+.profile svg{width:22px;height:22px}
+.nav-title{font-size:24px;font-weight:700;letter-spacing:-.7px;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.nav.scrolled .nav-title,.nav.solid .nav-title{opacity:1;transform:none}
+body.sub .large{display:none}
+.profile{position:absolute;right:16px;top:50%;margin-top:-21px;width:42px;height:42px;border-radius:50%;border:0;background:var(--fill);color:var(--blue);display:grid;place-items:center;cursor:pointer}
+.profile::after{content:"";position:absolute;inset:-5px}
+.large{margin:0 4px 12px;font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-1px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:28px 22px 22px;min-height:196px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;
+  background:radial-gradient(120% 90% at 100% 0%,#6f6bf0 0%,transparent 55%),radial-gradient(90% 80% at 0% 100%,#0a84ff 0%,transparent 60%),linear-gradient(145deg,#0a6cf0,#4b3fd8);
+  box-shadow:0 12px 28px rgba(10,108,240,.28),inset 0 0 0 .5px rgba(255,255,255,.25)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.hero::before{width:240px;height:240px;right:-90px;top:-100px;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 68%)}
+.hero::after{width:200px;height:200px;right:-50px;bottom:-90px;border:1px solid rgba(255,255,255,.16);box-shadow:0 0 0 28px rgba(255,255,255,.05),0 0 0 56px rgba(255,255,255,.03)}
+:root[data-theme="dark"] .hero{box-shadow:0 12px 28px rgba(10,132,255,.18),inset 0 0 0 .5px rgba(255,255,255,.18)}
+.hero h1{position:relative;z-index:1;font-size:clamp(28px,8.4vw,34px);line-height:1.08;font-weight:800;letter-spacing:-1.1px;max-width:260px;text-shadow:0 1px 12px rgba(0,0,0,.12)}
+.cta{position:relative;z-index:1;align-self:flex-start;margin-top:28px;height:46px;padding:0 22px 0 16px;border:0;border-radius:999px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0a6cf0;font-size:17px;font-weight:600;letter-spacing:-.3px;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}
+
+/* sections & lists */
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:28px 4px 10px}
+.sec h2{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px}
+.sec .more{border:0;background:none;color:var(--blue);font-size:17px;letter-spacing:-.4px;cursor:pointer}
+.sec small{font-size:15px;color:var(--sub)}
+.list{background:var(--card);border-radius:14px;overflow:hidden;transition:background .3s}
+.item{position:relative;display:flex;align-items:center;gap:14px;padding:10px 16px;min-height:72px;cursor:pointer;transition:background .2s}
+.item:active{background:var(--press)}
+.item+.item::before{content:"";position:absolute;top:0;right:0;left:82px;height:.5px;background:var(--line)}
+.logo{width:52px;height:52px;border-radius:12px;flex:none;display:grid;place-items:center;overflow:hidden;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.ltr{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.info{flex:1;min-width:0}
+.info h3{font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:14px;line-height:18px;letter-spacing:-.2px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{flex:none;color:var(--chev);margin-left:-6px}
+.foot{margin:8px 20px 0;font-size:13px;line-height:18px;color:var(--sub)}
+
+/* swipe cards (Home) */
+.rail{display:flex;gap:14px;margin:0 -16px;padding:2px 16px 18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.pcard{flex:0 0 82%;scroll-snap-align:start;background:var(--card);border-radius:24px;overflow:hidden;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.10),0 0 0 .5px var(--line);transition:transform .35s cubic-bezier(.34,1.56,.64,1),background .3s}
+.pcard:active{transform:scale(.97);transition-duration:.1s}
+.ptop{position:relative;height:128px;display:grid;place-items:center;overflow:hidden}
+.ptop::before{content:"";position:absolute;width:220px;height:220px;right:-70px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 68%)}
+.ptop::after{content:"";position:absolute;width:150px;height:150px;left:-50px;bottom:-80px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:0 0 0 22px rgba(255,255,255,.05)}
+.pic{position:relative;z-index:1;width:72px;height:72px;border-radius:19px;display:grid;place-items:center;overflow:hidden;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4),0 8px 20px rgba(0,0,0,.18)}
+.pic svg{width:44px;height:44px}
+.pic img{width:100%;height:100%;object-fit:cover}
+.pic .ltr{font-size:34px}
+.pbody{padding:16px 18px 16px}
+.pbody h3{font-size:22px;line-height:27px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dates{display:flex;margin-top:12px;padding-top:12px;border-top:.5px solid var(--line)}
+.dates div{flex:1}
+.dates small{display:block;font-size:11px;font-weight:600;letter-spacing:.6px;color:var(--sub);margin-bottom:3px}
+.dates b{font-size:15px;font-weight:600;letter-spacing:-.3px}
+
+/* install button */
+.get{flex:none;min-width:72px;height:30px;padding:0 16px;border:0;border-radius:999px;background:var(--fill);color:var(--blue);font-size:15px;font-weight:700;letter-spacing:.2px;cursor:pointer}
+.get.busy{pointer-events:none}
+
+/* settings */
+.row{display:flex;align-items:center;gap:14px;padding:8px 16px;min-height:52px}
+.row i{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;color:#fff;background:#5856d6;flex:none}
+.row span{flex:1;font-size:17px;letter-spacing:-.4px}
+.sw{position:relative;width:51px;height:31px;border-radius:999px;border:0;background:rgba(120,120,128,.32);flex:none;cursor:pointer;transition:background .3s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 1px 1px rgba(0,0,0,.16);transition:transform .3s cubic-bezier(.3,1.3,.5,1)}
+.sw.on{background:#34c759}
+.sw.on::after{transform:translateX(20px)}
+
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-top:.5px solid var(--line);padding:5px 8px calc(env(safe-area-inset-bottom,0px) + 2px);transition:background .3s}
+.tabbar div{max-width:480px;margin:0 auto;display:flex}
+.tabbar button{flex:1;min-height:46px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:500;color:var(--gray);cursor:pointer}
+.tabbar button.on{color:var(--blue)}
+.tabbar button.on .f{fill:currentColor}
+
+/* scrims */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+#scrim{z-index:59}#ascrim{z-index:69}
+
+/* centered new-project dialog */
+.wrap{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px;pointer-events:none}
+.dlg{width:min(100%,360px);max-height:calc(100% - 8px);overflow-y:auto;background:var(--modal);border-radius:28px;padding:22px 18px 14px;box-shadow:0 24px 60px rgba(0,0,0,.35);opacity:0;transform:scale(.9) translateY(12px);pointer-events:none;transition:opacity .25s,transform .4s cubic-bezier(.32,1.2,.5,1)}
+.dlg.on{opacity:1;transform:none;pointer-events:auto}
+.dlg h3{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;text-align:center}
+.dlg .sub{font-size:14px;line-height:19px;color:var(--sub);text-align:center;margin:4px 8px 16px}
+.picker{display:block;width:92px;height:92px;margin:0 auto 6px;border-radius:24px;border:1.5px dashed var(--chev);background:var(--grp);color:var(--blue);overflow:hidden;cursor:pointer;padding:0}
+.picker .ph{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600}
+.picker img{width:100%;height:100%;object-fit:cover}
+.picker.has{border-style:solid;border-color:transparent;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.cap{text-align:center;font-size:12px;color:var(--sub);margin-bottom:16px}
+.grp{background:var(--grp);border-radius:14px;overflow:hidden;margin-bottom:8px}
+.grp input{display:block;width:100%;height:50px;border:0;background:none;padding:0 16px;font-size:17px;letter-spacing:-.3px;outline:0}
+.grp input::placeholder{color:var(--sub)}
+.zrow{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;border:0;background:none;padding:8px 16px;text-align:left;cursor:pointer}
+.zrow:active{background:var(--press)}
+.zrow i{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:#fff;background:#7d879b;flex:none}
+.zrow span{flex:1;min-width:0}
+.zrow b{display:block;font-size:17px;font-weight:400;letter-spacing:-.3px}
+.zrow small{display:block;font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zrow .x{width:26px;height:26px;border-radius:50%;display:none;place-items:center;background:var(--fill);color:var(--sub);flex:none}
+.zrow.has .x{display:grid}
+.zrow.has i{background:#34c759}
+.dlg .foot{margin:6px 14px 14px;text-align:center}
+.primary{display:block;width:100%;height:50px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
+.plain{display:block;width:100%;height:46px;margin-top:4px;border:0;background:none;color:var(--blue);font-size:17px;cursor:pointer}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* iOS alert */
+.awrap{position:fixed;inset:0;z-index:70;display:grid;place-items:center;pointer-events:none}
+.alert{width:270px;background:var(--card);border-radius:14px;overflow:hidden;text-align:center;opacity:0;transform:scale(1.12);pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.3,1.1);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+:root[data-theme="dark"] .alert{background:#2c2c2e}
+.alert.on{opacity:1;transform:none;pointer-events:auto}
+.alert .body{padding:18px 16px 16px}
+.alert h4{font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.4px}
+.alert p{font-size:13px;line-height:18px;margin-top:2px}
+.alert input{display:block;width:100%;height:32px;margin-top:12px;border:.5px solid var(--line);border-radius:7px;background:var(--bg);padding:0 8px;font-size:15px;outline:0}
+.abtns{display:flex;border-top:.5px solid var(--line)}
+.abtns button{flex:1;height:44px;border:0;background:none;color:var(--blue);font-size:17px;cursor:pointer}
+.abtns button+button{border-left:.5px solid var(--line);font-weight:600}
+.abtns button:active{background:var(--press)}
+.abtns button.danger{color:var(--red)}
+
+/* ---------- push pages (project / file / preview) ---------- */
+:root{--hc:#8e8e93;--ht:#c2410c;--ha:#7c3aed;--hs:#15803d;--hk:#be185d;--hn:#0369a1}
+:root[data-theme="dark"]{--hc:#7d8590;--ht:#ff9f0a;--ha:#c4a7ff;--hs:#7ee787;--hk:#ff7ab2;--hn:#64d2ff}
+.pg{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .45s cubic-bezier(.32,.72,0,1);height:100%;height:100dvh}
+.pg.on{transform:none}
+#proj{z-index:50}#fed{z-index:52}#prev{z-index:54}
+#cscrim{z-index:59}
+.ebar{flex:none;padding-top:env(safe-area-inset-top,0px);background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-bottom:.5px solid var(--line);transition:background .25s,border-color .25s}
+.ebar.flat{background:transparent;border-bottom-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
+.ebar-in{height:60px;padding:0 8px;display:flex;align-items:center;gap:2px}
+.ebtn{height:44px;min-width:44px;padding:0 8px;border:0;background:none;color:var(--blue);font-size:17px;letter-spacing:-.4px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;flex:none}
+.ebtn.ib{width:40px;min-width:40px;padding:0;color:var(--text)}
+.ebtn.ib.dim{opacity:.35}
+#svBtn{color:var(--gray)}#svBtn.on{color:var(--blue)}
+.etitle{flex:1;min-width:0;text-align:center;font-size:17px;font-weight:700;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etitle b{display:block;font-size:17px;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.etitle small{display:block;font-size:12px;font-weight:500;color:var(--sub);letter-spacing:0;margin-top:1px}
+
+/* project page */
+.pscroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 32px)}
+.ptitle{margin:0 4px;font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.psub{margin:4px 4px 16px;font-size:14px;color:var(--sub)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{position:relative;overflow:hidden;border:0;border-radius:22px;min-height:92px;padding:14px;display:flex;align-items:center;gap:12px;color:#fff;text-align:left;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.14),inset 0 0 0 .5px rgba(255,255,255,.25)}
+.tile::after{content:"";position:absolute;width:120px;height:120px;right:-40px;top:-50px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.3),transparent 70%);pointer-events:none}
+.tile.g{background:linear-gradient(145deg,#34c759,#1fa745)}
+.tile.o{background:linear-gradient(145deg,#ff9f0a,#ff7a00)}
+.tile i{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}
+.tile b{display:block;font-size:17px;font-weight:700;letter-spacing:-.4px;line-height:20px}
+.tile small{display:block;font-size:12px;opacity:.88;line-height:15px;margin-top:2px}
+.fhead{display:flex;align-items:center;gap:4px;margin:26px 4px 10px}
+.fhead h2{flex:1;font-size:22px;font-weight:700;letter-spacing:-.5px}
+.tbtn{width:38px;height:38px;border:0;border-radius:50%;background:none;color:var(--blue);display:grid;place-items:center;cursor:pointer}
+.imp{height:34px;margin-left:4px;padding:0 14px 0 10px;border:0;border-radius:999px;background:var(--blue);color:#fff;font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer}
+.sbar{display:none;align-items:center;gap:12px;margin:0 0 10px}
+.sbar.on{display:flex}
+.sbar label{flex:1;display:flex;align-items:center;gap:8px;height:36px;border-radius:10px;background:var(--fill);padding:0 10px;color:var(--sub)}
+.sbar input{flex:1;min-width:0;border:0;background:none;outline:0;font-size:17px}
+.sbar button{border:0;background:none;color:var(--blue);font-size:17px;cursor:pointer}
+.frow{position:relative;overflow:hidden}
+.frow+.frow::before{content:"";position:absolute;top:0;right:0;left:70px;height:.5px;background:var(--line);z-index:2}
+.fdel{position:absolute;top:0;right:0;bottom:0;width:88px;border:0;background:var(--red);color:#fff;font-size:17px;font-weight:500;cursor:pointer}
+.fin{position:relative;z-index:1;display:flex;align-items:center;gap:14px;padding:10px 16px;min-height:66px;background:var(--card);cursor:pointer;touch-action:pan-y;transition:transform .3s cubic-bezier(.32,.72,0,1),background .3s}
+.fin:active{box-shadow:inset 0 0 0 100px var(--press)}
+.fi{width:40px;height:40px;border-radius:10px;flex:none;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800;letter-spacing:.2px}
+.fempty{padding:30px 16px;text-align:center;color:var(--sub);font-size:15px}
+
+/* new file / import dialogs */
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 14px}
+.chip{height:34px;padding:0 14px;border:0;border-radius:999px;background:var(--grp);font-size:15px;font-weight:500;cursor:pointer;transition:background .2s,color .2s}
+.chip.on{background:var(--blue);color:#fff}
+.fld{display:flex;align-items:center;padding-right:16px;margin-bottom:14px}
+.fld span{color:var(--sub);font-size:17px}
+.grp .zrow+.zrow{border-top:.5px solid var(--line)}
+
+/* file editor */
+.tabs{flex:none;display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;height:34px;padding:0 14px;border:0;border-radius:999px;background:var(--fill);font-size:15px;font-weight:500;letter-spacing:-.2px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s,color .2s}
+.tab i{width:8px;height:8px;border-radius:50%}
+.tab.on{background:var(--blue);color:#fff}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;font-size:14px;line-height:22px;letter-spacing:0;tab-size:2;font-variant-ligatures:none;-webkit-text-size-adjust:100%}
+.cwrap{flex:1;min-height:0;display:flex;background:var(--card);border-top:.5px solid var(--line);transition:background .3s}
+.gut{flex:none;position:relative;overflow:hidden;border-right:.5px solid var(--line)}
+.gut pre{position:absolute;top:0;left:0;right:0;margin:0;padding:12px 8px 12px 6px;text-align:right;color:var(--sub);will-change:transform}
+.cbox{position:relative;flex:1;min-width:0;overflow:hidden}
+#hl{position:absolute;left:0;top:0;margin:0;padding:12px 14px;white-space:pre;pointer-events:none;color:var(--text);will-change:transform}
+#code{position:absolute;inset:0;width:100%;height:100%;resize:none;border:0;outline:0;margin:0;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--blue);padding:12px 14px 140px;white-space:pre;overflow:auto;border-radius:0}
+#code::selection{background:rgba(10,132,255,.3);-webkit-text-fill-color:transparent}
+.h-c{color:var(--hc);font-style:italic}.h-t{color:var(--ht)}.h-a{color:var(--ha)}.h-s{color:var(--hs)}.h-k{color:var(--hk)}.h-n{color:var(--hn)}
+.kbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 8px);background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-top:.5px solid var(--line)}
+.keys{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.keys::-webkit-scrollbar{display:none}
+.k{flex:none;min-width:40px;height:38px;padding:0 10px;border:0;border-radius:9px;background:var(--card);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;box-shadow:0 1px 0 rgba(0,0,0,.28);cursor:pointer}
+:root[data-theme="dark"] .k{background:#3a3a3c}
+.run{flex:none;width:52px;height:38px;border:0;border-radius:9px;background:#34c759;color:#fff;display:grid;place-items:center;cursor:pointer}
+#pfw{flex:1;min-height:0;display:flex}
+#pf{flex:1;border:0;background:#fff;width:100%;height:100%}
+
+.wrap>.dlg{grid-area:1/1}
+
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 88px);z-index:80;transform:translate(-50%,16px);background:rgba(40,40,44,.92);color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;font-weight:500;opacity:0;pointer-events:none;white-space:nowrap;transition:.3s cubic-bezier(.2,.8,.2,1)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+[hidden]{display:none!important}
+/* action sheet */
+.act{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);max-width:464px;margin:0 auto;z-index:70;transform:translateY(130%);transition:transform .4s cubic-bezier(.32,.72,0,1)}
+.act.on{transform:none}
+.act .g1{background:var(--card);border-radius:14px;overflow:hidden;margin-bottom:8px}
+.act button{display:block;width:100%;height:56px;border:0;background:none;color:var(--blue);font-size:20px;cursor:pointer}
+.act button:active{background:var(--press)}
+.act .g1 button{border-top:.5px solid var(--line)}
+.act .g1 button.danger{color:var(--red)}
+.act .g1 p{padding:12px 16px;text-align:center;font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act .cn{background:var(--card);border-radius:14px;font-weight:600}
+/* build page */
+#bld{z-index:53}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:0 auto 14px;max-width:320px}
+.seg button{flex:1;height:30px;border:0;border-radius:7px;background:none;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.seg button.on{background:var(--card);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.phone{width:238px;margin:6px auto 8px;padding:10px;border-radius:40px;background:#111;box-shadow:0 14px 34px rgba(0,0,0,.3),inset 0 0 0 2px #333}
+.scr{position:relative;width:218px;height:452px;border-radius:30px;overflow:hidden;background:#fff;color:#000;isolation:isolate}
+.sbr{position:absolute;top:0;left:0;right:0;height:22px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:10px;font-weight:600}
+.scr[data-m=app] .sbr{background:#fff}
+.sbr i{width:8px;height:8px;border-radius:50%;background:#111;position:absolute;left:50%;top:7px;margin-left:-4px;opacity:.85}
+.scr iframe{position:absolute;left:0;top:22px;width:360px;height:680px;border:0;background:#fff;transform-origin:0 0;transform:scale(.6056)}
+.navb{position:absolute;left:0;right:0;bottom:0;height:18px;z-index:6;display:grid;place-items:center;background:#fff}
+.scr:not([data-m=app]) .navb{background:transparent}
+.navb b{width:70px;height:4px;border-radius:2px;background:#222}
+.scr[data-m=splash] .navb b,.scr[data-m=home] .navb b{background:#fff;mix-blend-mode:difference}
+.lyr{position:absolute;inset:0;z-index:4;display:none}
+.scr[data-m=splash] .lsp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:pop .6s cubic-bezier(.2,.9,.3,1.1)}
+.scr[data-m=home] .llh{display:block;background:linear-gradient(160deg,#3a2f7a,#0a5c8a 60%,#1a1a3a)}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.lsp .spi{width:84px;height:84px;object-fit:contain}
+.lsp .sn{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 2px;padding:40px 8px 0}
+.li{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:8px;color:#fff;text-align:center;min-width:0}
+.li .fk{width:34px;height:34px;border-radius:22%}
+.li span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aic{border-radius:22%;overflow:hidden;display:grid;place-items:center;color:#fff;flex:none}
+.aic img{width:100%;height:100%;object-fit:cover}
+.aic svg{width:62%;height:62%}
+.aic .ltr{font-size:inherit}
+.fr{display:flex;align-items:center;gap:10px;min-height:50px;padding:0 16px}
+.fr+.fr,.grp>.fr:first-child~*{border-top:.5px solid var(--line)}
+#bSpOpt .fr{border-top:.5px solid var(--line)}
+.fr label{flex:none;width:104px;font-size:16px;letter-spacing:-.3px}
+.fr input,.fr select{flex:1;min-width:0;height:44px;border:0;background:none;outline:0;font-size:16px;text-align:right;color:var(--text);-webkit-appearance:none;appearance:none}
+.fr select{text-align-last:right}
+.fr input[type=color]{flex:none;width:44px;height:30px;padding:0;border-radius:6px;cursor:pointer}
+.lnk{flex:1;height:44px;border:0;background:none;color:var(--blue);font-size:16px;text-align:right;cursor:pointer}
+.bbar{flex:none;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 12px);background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-top:.5px solid var(--line)}
+.bov{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.bov.on{opacity:1;pointer-events:auto}
+.bcard{width:280px;background:var(--card);border-radius:20px;padding:26px 20px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.bcard h4{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.bcard p{font-size:14px;color:var(--sub);margin-top:4px;min-height:18px}
+.prg{height:6px;border-radius:3px;background:var(--fill);margin:16px 0 8px;overflow:hidden}
+.prg i{display:block;height:100%;width:0;background:var(--blue);transition:width .5s}
+.okc{width:60px;height:60px;border-radius:50%;background:#34c759;margin:0 auto 12px;display:grid;place-items:center;color:#fff;animation:pop .5s cubic-bezier(.2,.9,.3,1.3)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="n" viewBox="0 0 48 48"><path d="M9 41V7h8.5L32 28.5V7h7v34h-8.2L16 19.5V41z" fill="#0a84ff"/></symbol>
+    <symbol id="go" viewBox="0 0 24 24"><path class="ic" d="M9 5l7 7-7 7" style="stroke-width:2.25"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="navbar"><div class="nav-in">
+  <div class="nav-title" id="navTitle">NFX STUDIO</div>
+  <button class="profile press" id="profile" aria-label="Profile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21v-1a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v1"/></svg></button>
+</div></header>
+
+<main class="app">
+  <div class="large" id="bigTitle">NFX STUDIO</div>
+
+  <section class="page on" id="p-home">
+    <div class="hero">
+      <h1>Build Your Next Project</h1>
+      <button class="cta press" id="create"><svg class="ic" width="22" height="22" viewBox="0 0 24 24" style="stroke-width:2.25"><path d="M12 5v14M5 12h14"/></svg>New Project</button>
+    </div>
+    <div class="sec"><h2>Recent Projects</h2><button class="more" id="seeAll">See All</button></div>
+    <div class="rail" id="recent"></div>
+  </section>
+
+  <section class="page" id="p-projects">
+    <div class="sec" style="margin-top:14px"><h2 style="font-size:15px;font-weight:400;color:var(--sub);letter-spacing:-.2px;text-transform:uppercase">All Projects</h2><small id="count"></small></div>
+    <div class="list" id="plist"></div>
+  </section>
+
+  <section class="page" id="p-apk">
+    <div class="sec" style="margin-top:14px"><h2 style="font-size:15px;font-weight:400;color:var(--sub);letter-spacing:-.2px;text-transform:uppercase">Built APKs</h2><small id="acount"></small></div>
+    <div class="list" id="alist"></div>
+    <p class="foot">Tap Install to add the APK to this device.</p>
+  </section>
+
+  <section class="page" id="p-settings">
+    <div class="list">
+      <div class="row">
+        <i><svg class="ic" width="18" height="18" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg></i>
+        <span>Dark Mode</span>
+        <button class="sw" id="sw" role="switch" aria-checked="false" aria-label="Dark Mode"></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar"><div id="tabs"></div></nav>
+
+<!-- New Project (centered) -->
+<div class="scrim" id="scrim"></div>
+<div class="wrap"><div class="dlg" id="newDlg" role="dialog" aria-label="New Project">
+  <h3>New Project</h3>
+  <p class="sub">Add an icon and a name. Upload a ZIP, add a website link, or start empty.</p>
+  <button class="picker press" id="pickIcon" aria-label="Choose icon"><span id="pickPrev" class="ph"><svg class="ic" width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>Add Icon</span></button>
+  <div class="cap">Project icon</div>
+  <div class="grp"><input id="pname" type="text" placeholder="Website Name" maxlength="40" autocomplete="off" autocapitalize="words"></div>
+  <div class="grp"><button class="zrow" id="pickZip"><i><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg></i><span><b>ZIP File</b><small id="zname">Optional</small></span><em class="x" id="zclear"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" style="stroke-width:2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></em><svg class="chev" width="18" height="18" id="zchev"><use href="#go"/></svg></button></div>
+  <div class="grp"><input id="purl" type="url" inputmode="url" placeholder="Website Link (optional)" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off"></div>
+  <p class="foot">ZIP and Website Link are optional (use one). Without either, an empty project opens with HTML, CSS and JS files.</p>
+  <button class="primary press" id="makeBtn">Create Project</button>
+  <button class="plain" id="newCancel">Cancel</button>
+  <input type="file" id="fIcon" accept="image/*" hidden>
+  <input type="file" id="fZip" accept=".zip,application/zip,application/x-zip-compressed" hidden>
+</div></div>
+
+<!-- New file / Import dialogs -->
+<div class="scrim" id="cscrim"></div>
+<div class="wrap">
+  <div class="dlg" id="crDlg" role="dialog" aria-label="New File">
+    <h3>New File</h3>
+    <p class="sub">Choose a type, then name your file.</p>
+    <div class="chips" id="crChips"></div>
+    <div class="grp fld"><input id="crName" type="text" placeholder="File name" autocomplete="off" autocapitalize="off" spellcheck="false"><span id="crExt">.html</span></div>
+    <button class="primary press" id="crOk">Create</button>
+    <button class="plain" id="crNo">Cancel</button>
+  </div>
+  <div class="dlg" id="impDlg" role="dialog" aria-label="Import">
+    <h3>Import</h3>
+    <p class="sub">Add files from your device to this project.</p>
+    <div class="grp">
+      <button class="zrow" id="impMedia"><i style="background:#ff375f"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></i><span><b>Media File</b><small>Images, audio, video</small></span><svg class="chev" width="18" height="18"><use href="#go"/></svg></button>
+      <button class="zrow" id="impOther"><i style="background:#5856d6"><svg class="ic" width="18" height="18" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></i><span><b>Other Type File</b><small>HTML, CSS, JS, JSON, text…</small></span><svg class="chev" width="18" height="18"><use href="#go"/></svg></button>
+    </div>
+    <button class="plain" id="impNo">Cancel</button>
+    <input type="file" id="fMedia" accept="image/*,audio/*,video/*" multiple hidden>
+    <input type="file" id="fOther" multiple hidden>
+  </div>
+</div>
+
+<!-- Project page -->
+<div class="pg" id="proj" aria-hidden="true">
+  <header class="ebar flat" id="pbar"><div class="ebar-in">
+    <button class="ebtn" id="pBack"><svg class="ic" width="14" height="22" viewBox="0 0 14 22" style="stroke-width:2.4"><path d="M11 3L3 11l8 8"/></svg>Projects</button>
+    <div class="etitle" id="pbTitle" style="opacity:0"></div>
+    <span style="width:84px;flex:none"></span>
+  </div></header>
+  <div class="pscroll" id="pscroll">
+    <h1 class="ptitle" id="pTitle"></h1>
+    <div class="psub" id="pSub"></div>
+    <div class="tiles">
+      <button class="tile g press" id="tPrev"><i><svg width="20" height="20" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#fff"/></svg></i><span><b>Preview</b><small>Run in browser</small></span></button>
+      <button class="tile o press" id="tApk"><i><svg class="ic" width="22" height="22" viewBox="0 0 24 24" style="color:#fff"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/></svg></i><span><b>Build APK</b><small>Export Android app</small></span></button>
+    </div>
+    <div class="fhead">
+      <h2>Files</h2>
+      <button class="tbtn press" id="sBtn" aria-label="Search"><svg class="ic" width="22" height="22" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+      <button class="tbtn press" id="addBtn" aria-label="New file"><svg class="ic" width="24" height="24" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="imp press" id="impBtn"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3"/></svg>Import</button>
+    </div>
+    <div class="sbar" id="sbar"><label><svg class="ic" width="16" height="16" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="sq" type="text" placeholder="Search files" autocomplete="off"></label><button id="sCancel">Cancel</button></div>
+    <div class="list" id="flist"></div>
+    <p class="foot" id="ffoot"></p>
+  </div>
+</div>
+
+<!-- File editor -->
+<div class="pg" id="fed" aria-hidden="true">
+  <header class="ebar"><div class="ebar-in">
+    <button class="ebtn" id="fBack"><svg class="ic" width="14" height="22" viewBox="0 0 14 22" style="stroke-width:2.4"><path d="M11 3L3 11l8 8"/></svg>Files</button>
+    <div class="etitle"><b id="fTitle"></b><small id="fPos">Ln 1, Col 1</small></div>
+    <button class="ebtn ib" id="uBtn" aria-label="Undo"><svg class="ic" width="23" height="23" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+    <button class="ebtn ib" id="rBtn" aria-label="Redo"><svg class="ic" width="23" height="23" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+    <button class="ebtn ib" id="svBtn" aria-label="Save"><svg class="ic" width="23" height="23" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
+  </div></header>
+  <div class="tabs" id="ftabs"></div>
+  <div class="cwrap">
+    <div class="gut mono" id="gut"><pre id="gnum">1</pre></div>
+    <div class="cbox"><pre class="mono" id="hl"></pre><textarea class="mono" id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div>
+  </div>
+  <div class="kbar"><div class="keys" id="keys"></div><button class="run press" id="runBtn" aria-label="Run"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#fff"/></svg></button></div>
+</div>
+
+<!-- Action sheet -->
+<div class="act" id="act"><div class="g1"><p id="actT"></p><button id="actRen">Rename</button><button class="danger" id="actDel">Delete</button></div><button class="cn" id="actNo">Cancel</button></div>
+
+<!-- Build APK -->
+<div class="pg" id="bld" aria-hidden="true">
+  <header class="ebar"><div class="ebar-in">
+    <button class="ebtn" id="bBack"><svg class="ic" width="14" height="22" viewBox="0 0 14 22" style="stroke-width:2.4"><path d="M11 3L3 11l8 8"/></svg>Project</button>
+    <div class="etitle">Build APK</div>
+    <span style="width:84px;flex:none"></span>
+  </div></header>
+  <div class="pscroll" id="bscroll" style="padding-top:12px">
+    <div class="seg" id="bseg"><button data-m="app" class="on">App</button><button data-m="splash">Splash</button><button data-m="home">Home Screen</button></div>
+    <div class="phone"><div class="scr" id="scr" data-m="app">
+      <div class="sbr" id="sbr"><span id="clk">9:41</span><i></i><span>LTE ▮</span></div>
+      <iframe id="bpf" sandbox="allow-scripts" title="App preview"></iframe>
+      <div class="lyr lsp" id="lsp"></div>
+      <div class="lyr llh"><div class="lgrid" id="lgrid"></div></div>
+      <div class="navb"><b></b></div>
+    </div></div>
+    <p class="foot" id="bcap" style="text-align:center;margin:0 0 18px"></p>
+
+    <button class="picker has press" id="bPick" aria-label="Upload icon"><span id="bPickPrev"></span></button>
+    <div class="cap">App icon · tap to upload</div>
+    <div class="grp">
+      <div class="fr"><label for="bName">App name</label><input id="bName" type="text" maxlength="40" autocomplete="off" placeholder="My App"></div>
+      <div class="fr"><label for="bPkg">Package</label><input id="bPkg" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="com.example.app"></div>
+      <div class="fr"><label for="bVn">Version name</label><input id="bVn" type="text" autocomplete="off" placeholder="1.0.0"></div>
+      <div class="fr"><label for="bVc">Version code</label><input id="bVc" type="text" inputmode="numeric" autocomplete="off" placeholder="1"></div>
+      <div class="fr"><label for="bHome">Home page</label><select id="bHome"></select></div>
+    </div>
+    <div class="grp">
+      <div class="fr"><label style="flex:1;width:auto">Splash screen <small style="color:var(--sub)">· optional</small></label><button class="sw" id="bSpSw" role="switch" aria-checked="false" aria-label="Splash screen"></button></div>
+      <div id="bSpOpt" hidden>
+        <div class="fr"><label>Background</label><input type="color" id="bSpCol" value="#0a84ff"></div>
+        <div class="fr"><label>Image</label><button class="lnk" id="bSpPick">Choose</button></div>
+        <div class="fr"><label for="bSpDur">Duration</label><select id="bSpDur"><option value="1">1 sec</option><option value="2" selected>2 sec</option><option value="3">3 sec</option></select></div>
+      </div>
+    </div>
+    <p class="foot">Without a splash image, the app icon is shown.</p>
+    <input type="file" id="fBIcon" accept="image/*" hidden>
+    <input type="file" id="fBSp" accept="image/*" hidden>
+  </div>
+  <div class="bbar"><button class="primary press" id="bBuild">Build APK</button></div>
+</div>
+
+<div class="bov" id="bov"><div class="bcard">
+  <div id="bwork"><h4>Building APK</h4><div class="prg"><i id="prgI"></i></div><p id="bstep">Starting…</p></div>
+  <div id="bdone" hidden><div class="okc"><svg class="ic" width="30" height="30" viewBox="0 0 24 24" style="stroke-width:3"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h4>Build Successful</h4><p id="bdoneT"></p></div>
+</div></div>
+
+<!-- Preview -->
+<div class="pg" id="prev" aria-hidden="true">
+  <header class="ebar"><div class="ebar-in">
+    <button class="ebtn" id="pvBack"><svg class="ic" width="14" height="22" viewBox="0 0 14 22" style="stroke-width:2.4"><path d="M11 3L3 11l8 8"/></svg>Done</button>
+    <div class="etitle">Preview</div>
+    <span style="width:70px;flex:none"></span>
+  </div></header>
+  <div id="pfw"></div>
+</div>
+
+<!-- iOS alert -->
+<div class="scrim" id="ascrim"></div>
+<div class="awrap"><div class="alert" id="alert" role="alertdialog">
+  <div class="body"><h4 id="aTitle"></h4><p id="aMsg"></p><input id="aIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+  <div class="abtns"><button id="aNo">Cancel</button><button id="aYes">OK</button></div>
+</div></div>
+<div id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt=d=>MON[d.getMonth()]+" "+String(d.getDate()).padStart(2,"0")+", "+d.getFullYear();
+const PAL=[["#ff9f0a","#ff6a00"],["#30d158","#17a34a"],["#bf5af2","#8944d8"],["#0a84ff","#0060df"],["#ff375f","#d6204a"],["#64d2ff","#2aa8e0"]];
+
+function starter(name){
+  return [
+    {name:"index.html",content:`<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>${esc(name)}</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <h1>${esc(name)}</h1>\n  <script src="script.js"><\/script>\n</body>\n</html>\n`},
+    {name:"style.css",content:`* { box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  font-family: system-ui, sans-serif;\n}\n`},
+    {name:"script.js",content:`console.log(${JSON.stringify("Hello from "+name)});\n`}
+  ];
+}
+
+const seed=[
+  {id:"p1",name:"NFX Studio",created:"Aug 14, 2026",updated:"Oct 25, 2026",bg:"linear-gradient(160deg,#16213f,#0a1226)",icon:'<svg width="38" height="38"><use href="#n"/></svg>',apk:["1.4.0","18.2 MB","Oct 25"]},
+  {id:"p2",name:"GreenLife",created:"Jul 02, 2026",updated:"Oct 18, 2026",bg:"linear-gradient(160deg,#5cc04a,#3ea02f)",icon:'<svg width="34" height="34" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" fill="#fff"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>',apk:["2.1.3","12.7 MB","Oct 18"]},
+  {id:"p3",name:"ShopEasy",created:"Sep 05, 2026",updated:"Oct 10, 2026",bg:"linear-gradient(160deg,#a14df0,#7b2fd6)",icon:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h3l2.5 11h11l2-8H6"/><circle cx="9" cy="20" r="1.5" fill="#fff"/><circle cx="17" cy="20" r="1.5" fill="#fff"/></svg>',apk:["1.0.8","21.5 MB","Oct 10"]},
+  {id:"p4",name:"CodeHub",created:"Sep 12, 2026",updated:"Sep 28, 2026",bg:"linear-gradient(160deg,#2a9bff,#0a6cf0)",icon:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 5l-4 14"/></svg>',apk:["0.9.2","9.4 MB","Sep 28"]}
+];
+const apks=seed.map(p=>({name:p.name,bg:p.bg,icon:p.icon,ver:p.apk[0],size:p.apk[1],date:p.apk[2]}));
+try{const sv=JSON.parse(localStorage.getItem("nfx-apks"));if(Array.isArray(sv))apks.unshift(...sv)}catch(e){}
+const saveApks=()=>{try{localStorage.setItem("nfx-apks",JSON.stringify(apks.filter(a=>a.built)))}catch(e){}};
+
+let lastLP=0;let projects=null;
+try{projects=JSON.parse(localStorage.getItem("nfx-projects"))}catch(e){}
+if(!Array.isArray(projects))projects=seed.map(p=>({id:p.id,name:p.name,created:p.created,updated:p.updated,bg:p.bg,icon:p.icon,files:starter(p.name)}));
+let saveT;function persist(){try{localStorage.setItem("nfx-projects",JSON.stringify(projects))}catch(e){}}
+const ts=p=>p.ts||Date.parse(p.updated)||0;
+const iconOf=p=>p.img?`<img src="${p.img}" alt="">`:(p.icon||`<b class="ltr">${esc((p.name[0]||"N").toUpperCase())}</b>`);
+
+const tabs=[
+  ["Home","home",'<path class="f" d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],
+  ["Projects","projects",'<path class="f" d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>'],
+  ["APK","apk",'<path class="f" d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/>'],
+  ["Settings","settings",'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>']
+];
+const titles={home:"NFX STUDIO",projects:"Projects",apk:"APK",settings:"Settings"};
+$("tabs").innerHTML=tabs.map((t,i)=>`<button class="press ${i?"":"on"}" data-t="${t[1]}"><svg class="ic" width="26" height="26" viewBox="0 0 24 24">${t[2]}</svg>${t[0]}</button>`).join("");
+
+const row=p=>`<article class="item" data-id="${p.id}" tabindex="0"><div class="logo" style="background:${p.bg}">${iconOf(p)}</div><div class="info"><h3>${esc(p.name)}</h3><div class="meta">Updated ${p.updated}</div></div><svg class="chev" width="18" height="18"><use href="#go"/></svg></article>`;
+const card=p=>`<article class="pcard" data-id="${p.id}" tabindex="0"><div class="ptop" style="background:${p.bg}"><div class="pic">${iconOf(p)}</div></div><div class="pbody"><h3>${esc(p.name)}</h3><div class="dates"><div><small>CREATED</small><b>${p.created}</b></div><div><small>LAST UPDATED</small><b>${p.updated}</b></div></div></div></article>`;
+const apkRow=p=>`<article class="item" tabindex="0"><div class="logo" style="background:${p.bg}">${p.icon}</div><div class="info"><h3>${esc(p.name)}</h3><div class="meta">v${esc(p.ver)} · ${p.size} · ${p.date}</div></div><button class="get press" data-n="${esc(p.name)}">INSTALL</button></article>`;
+
+function render(){
+  const s=[...projects].sort((a,b)=>ts(b)-ts(a));
+  $("recent").innerHTML=s.slice(0,6).map(card).join("");
+  $("plist").innerHTML=s.map(row).join("");
+  $("count").textContent=projects.length+(projects.length===1?" Project":" Projects");
+}
+render();
+function renderApks(){$("alist").innerHTML=apks.map(apkRow).join("");$("acount").textContent=apks.length+" APKs"}
+renderApks();
+
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2200)}
+
+function go(k){
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id==="p-"+k));
+  [...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.t===k));
+  $("bigTitle").textContent=$("navTitle").textContent=titles[k];
+  document.body.classList.toggle("sub",k!=="home");
+  $("navbar").classList.toggle("solid",k!=="home");
+  scrollTo(0,0);onScroll();
+}
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(b)go(b.dataset.t)};
+$("seeAll").onclick=()=>go("projects");
+$("profile").onclick=()=>toast("Profile — coming next");
+document.querySelector(".app").addEventListener("click",e=>{
+  if(Date.now()-lastLP<600)return;const g=e.target.closest(".get");
+  if(g){g.classList.add("busy");g.textContent="…";setTimeout(()=>{g.classList.remove("busy");g.textContent="OPEN";toast(g.dataset.n+" installed")},1400);return}
+  const c=e.target.closest("[data-id]");if(c)openProject(c.dataset.id);
+});
+
+/* dark mode (Settings only) */
+const root=document.documentElement,meta=document.querySelector('meta[name="theme-color"]'),sw=$("sw");
+function applyTheme(d){root.dataset.theme=d;meta.content=d==="dark"?"#000000":"#f2f2f7";sw.classList.toggle("on",d==="dark");sw.setAttribute("aria-checked",d==="dark")}
+let th="light";try{th=localStorage.getItem("nfx-theme")||"light"}catch(e){}
+applyTheme(th);
+sw.onclick=()=>{const d=root.dataset.theme==="dark"?"light":"dark";applyTheme(d);try{localStorage.setItem("nfx-theme",d)}catch(e){}};
+
+const nb=$("navbar");function onScroll(){nb.classList.toggle("scrolled",window.scrollY>40)}
+addEventListener("scroll",onScroll,{passive:true});onScroll();
+document.addEventListener("click",e=>{if(e.target.closest(".press,.item,.pcard,.sw,.tab")){try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}}});
+
+/* ---------- iOS alert ---------- */
+function ask({title,msg="",input=null,ok="OK",danger=false}){
+  return new Promise(res=>{
+    $("aTitle").textContent=title;$("aMsg").textContent=msg;$("aMsg").style.display=msg?"":"none";
+    const inp=$("aIn");inp.style.display=input===null?"none":"block";if(input!==null)inp.value=input;
+    $("aYes").textContent=ok;$("aYes").classList.toggle("danger",danger);
+    $("alert").classList.add("on");$("ascrim").classList.add("on");
+    if(input!==null)setTimeout(()=>{inp.focus();inp.select()},260);
+    const done=v=>{$("alert").classList.remove("on");$("ascrim").classList.remove("on");$("aYes").onclick=$("aNo").onclick=inp.onkeydown=null;res(v)};
+    $("aYes").onclick=()=>done(input===null?true:inp.value.trim());
+    $("aNo").onclick=()=>done(null);
+    inp.onkeydown=e=>{if(e.key==="Enter")$("aYes").click()};
+  });
+}
+
+/* ---------- New project ---------- */
+let iconData=null,zipFile=null;
+const PH=$("pickPrev").innerHTML;
+function openNew(){
+  iconData=null;zipFile=null;$("pname").value="";$("purl").value="";
+  $("pickPrev").className="ph";$("pickPrev").innerHTML=PH;$("pickIcon").classList.remove("has");
+  $("zname").textContent="Optional";$("pickZip").classList.remove("has");$("zchev").style.display="";
+  $("newDlg").classList.add("on");$("scrim").classList.add("on");
+}
+function closeNew(){$("newDlg").classList.remove("on");$("scrim").classList.remove("on");document.activeElement&&document.activeElement.blur()}
+$("create").onclick=openNew;$("scrim").onclick=closeNew;$("newCancel").onclick=closeNew;
+$("pickIcon").onclick=()=>$("fIcon").click();
+$("fIcon").onchange=e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{
+    const c=document.createElement("canvas");c.width=c.height=160;const x=c.getContext("2d"),s=Math.min(im.width,im.height);
+    x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,160,160);
+    iconData=c.toDataURL("image/jpeg",.85);
+    $("pickPrev").className="";$("pickPrev").innerHTML=`<img src="${iconData}" alt="">`;$("pickIcon").classList.add("has");
+  };im.onerror=()=>toast("Could not read that image");im.src=r.result};
+  r.readAsDataURL(f);
+};
+$("pickZip").onclick=e=>{
+  if(e.target.closest(".x")){zipFile=null;$("zname").textContent="Optional";$("pickZip").classList.remove("has");$("zchev").style.display="";return}
+  $("fZip").click();
+};
+$("fZip").onchange=e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  zipFile=f;$("zname").textContent=f.name+" · "+(f.size/1048576>=1?(f.size/1048576).toFixed(1)+" MB":Math.max(1,Math.round(f.size/1024))+" KB");
+  $("pickZip").classList.add("has");$("zchev").style.display="none";
+  if(!$("pname").value.trim())$("pname").value=f.name.replace(/\.zip$/i,"").slice(0,40);
+};
+function webFiles(name,u){
+  return [{name:"index.html",content:`<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>${esc(name)}</title>\n  <style>html,body{margin:0;height:100%}iframe{border:0;width:100%;height:100%}</style>\n</head>\n<body>\n  <iframe src="${esc(u)}" allow="fullscreen"></iframe>\n</body>\n</html>\n`}];
+}
+async function readZip(file){
+  if(typeof JSZip==="undefined"){toast("ZIP reader needs internet — empty project created");return null}
+  try{
+    const z=await JSZip.loadAsync(file);
+    let ents=Object.values(z.files).filter(f=>!f.dir&&!/(^|\/)(__MACOSX|\.git|node_modules)\//.test(f.name)&&!/(^|\/)\.DS_Store$/.test(f.name));
+    const text=/\.(html?|css|js|mjs|json|txt|md|xml|svg|ts|jsx|tsx|csv|yml|yaml)$/i;
+    ents=ents.filter(f=>text.test(f.name));
+    if(ents.length){const first=ents.map(f=>f.name.split("/")[0]);if(ents.every(f=>f.name.includes("/"))&&first.every(s=>s===first[0]))ents.forEach(f=>f._n=f.name.slice(first[0].length+1))}
+    const out=[];
+    for(const f of ents.slice(0,60)){out.push({name:f._n||f.name,content:await f.async("string")})}
+    out.sort((a,b)=>(a.name==="index.html"?-1:b.name==="index.html"?1:a.name.localeCompare(b.name)));
+    return out;
+  }catch(err){toast("Could not open that ZIP — empty project created");return null}
+}
+$("makeBtn").onclick=async()=>{
+  const url=$("purl").value.trim();let link=null;
+  if(url){
+    if(zipFile){toast("Choose either a ZIP or a website link");return}
+    try{link=new URL(/^https?:\/\//i.test(url)?url:"https://"+url);if(!link.hostname.includes("."))throw 0}catch(e){toast("Enter a valid website link");$("purl").focus();return}
+    if(!$("pname").value.trim())$("pname").value=link.hostname.replace(/^www\./,"").split(".")[0].slice(0,40);
+  }
+  const name=$("pname").value.trim();
+  if(!name){const g=$("pname").parentElement;g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");toast("Enter a website name");$("pname").focus();return}
+  const btn=$("makeBtn");btn.disabled=true;btn.textContent="Creating…";
+  let files=link?webFiles(name,link.href):zipFile?await readZip(zipFile):null;
+  if(!files||!files.length){if(zipFile&&files)toast("No code files found in ZIP");files=starter(name)}
+  const pal=PAL[projects.length%PAL.length],now=new Date();
+  const p={id:"p"+Date.now(),name,created:fmt(now),updated:fmt(now),ts:now.getTime(),bg:`linear-gradient(160deg,${pal[0]},${pal[1]})`,files};
+  if(iconData)p.img=iconData;if(link)p.url=link.href;
+  projects.unshift(p);persist();render();
+  btn.disabled=false;btn.textContent="Create Project";
+  closeNew();setTimeout(()=>openProject(p.id),220);
+};
+
+/* ---------- navigation stack (iOS push + Android back) ---------- */
+const stackFns=[];let hist=false;
+function pushNav(fn){stackFns.push(fn);try{history.pushState({n:stackFns.length},"");hist=true}catch(e){hist=false}}
+function popTop(){const f=stackFns.pop();if(f)f()}
+function goBack(){if(hist&&stackFns.length){try{history.back();return}catch(e){}}popTop()}
+addEventListener("popstate",()=>{const n=(history.state&&history.state.n)||0;while(stackFns.length>n)popTop()});
+const show=(id,on)=>{const el=$(id);el.classList.toggle("on",on);el.setAttribute("aria-hidden",on?"false":"true")};
+
+/* ---------- helpers ---------- */
+let cur=null,fi=0,dirty=false,saveT2,lastSwipe=0,lastN=0,raf=0;
+const extOf=n=>(n.includes(".")?n.split(".").pop():"").toLowerCase();
+const EXT_COL={html:["#ff9500","#ff6a00"],htm:["#ff9500","#ff6a00"],css:["#0a84ff","#0060df"],js:["#f5b700","#e09600"],json:["#34c759","#1fa745"],xml:["#bf5af2","#8944d8"],txt:["#8e8e93","#636366"],md:["#64d2ff","#2aa8e0"],php:["#5e5ce6","#4240c4"],svg:["#ff9500","#ff6a00"]};
+const dot=n=>(EXT_COL[extOf(n)]||EXT_COL.txt)[0];
+const fmtTime=t=>{const d=new Date(t);let h=d.getHours();const ap=h>=12?"PM":"AM";h=h%12||12;return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()+" · "+h+":"+String(d.getMinutes()).padStart(2,"0")+" "+ap};
+const fmtSize=n=>n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(1)+" MB";
+const sizeOf=f=>f.media?(f.size||Math.round((f.data||"").length*.75)):new Blob([f.content]).size;
+function touchProj(){const d=new Date();cur.updated=fmt(d);cur.ts=d.getTime();$("pSub").textContent="Created "+cur.created+" · Updated "+cur.updated;persist()}
+function fileIcon(f){
+  if(f.media)return `<div class="fi" style="background:linear-gradient(145deg,#ff375f,#d6204a)"><svg class="ic" width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></div>`;
+  const e=extOf(f.name),c=EXT_COL[e]||EXT_COL.txt;
+  return `<div class="fi" style="background:linear-gradient(145deg,${c[0]},${c[1]})">${esc((e||"file").slice(0,4).toUpperCase())}</div>`;
+}
+
+/* ---------- project page ---------- */
+function openProject(id){
+  const p=projects.find(x=>x.id===id);if(!p)return;cur=p;
+  cur.files.forEach(f=>{if(!f.mod)f.mod=cur.ts||Date.parse(cur.updated)||Date.now()});
+  $("pTitle").textContent=$("pbTitle").textContent=cur.name;
+  $("pSub").textContent="Created "+cur.created+" · Updated "+cur.updated;
+  $("sq").value="";$("sbar").classList.remove("on");
+  renderFiles();$("pscroll").scrollTop=0;onPScroll();
+  show("proj",true);pushNav(closeProject);
+}
+function closeProject(){show("proj",false);persist();render();cur=null}
+function onPScroll(){const s=$("pscroll").scrollTop>40;$("pbar").classList.toggle("flat",!s);$("pbTitle").style.opacity=s?1:0}
+$("pscroll").addEventListener("scroll",onPScroll,{passive:true});
+$("pBack").onclick=goBack;
+
+function renderFiles(){
+  const q=$("sq").value.trim().toLowerCase();
+  const items=cur.files.map((f,i)=>({f,i})).filter(o=>!q||o.f.name.toLowerCase().includes(q));
+  $("flist").innerHTML=items.length?items.map(o=>`<div class="frow"><button class="fdel" data-d="${o.i}">Delete</button><div class="fin" data-i="${o.i}">${fileIcon(o.f)}<div class="info"><h3>${esc(o.f.name)}</h3><div class="meta">${fmtTime(o.f.mod||cur.ts||Date.now())} · ${fmtSize(sizeOf(o.f))}</div></div><svg class="chev" width="18" height="18"><use href="#go"/></svg></div></div>`).join(""):`<div class="fempty">${q?"No results":"No files yet. Tap + to create one."}</div>`;
+  $("ffoot").textContent=cur.files.length+(cur.files.length===1?" file":" files")+" · swipe left to delete · hold for more";
+}
+$("sq").oninput=renderFiles;
+$("sBtn").onclick=()=>{const b=$("sbar");b.classList.toggle("on");if(b.classList.contains("on"))$("sq").focus();else{$("sq").value="";renderFiles()}};
+$("sCancel").onclick=()=>{$("sq").value="";$("sbar").classList.remove("on");renderFiles()};
+
+/* swipe-to-delete rows */
+let sx=null;
+function closeSwipes(except){document.querySelectorAll(".fin.open").forEach(r=>{if(r!==except){r.classList.remove("open");r.style.transform=""}})}
+$("flist").addEventListener("touchstart",e=>{const r=e.target.closest(".fin");if(!r)return;closeSwipes(r);sx={r,x:e.touches[0].clientX,y:e.touches[0].clientY,base:r.classList.contains("open")?-88:0,lock:null}},{passive:true});
+$("flist").addEventListener("touchmove",e=>{
+  if(!sx)return;const dx=e.touches[0].clientX-sx.x,dy=e.touches[0].clientY-sx.y;
+  if(sx.lock===null&&(Math.abs(dx)>8||Math.abs(dy)>8))sx.lock=Math.abs(dx)>Math.abs(dy)?"x":"y";
+  if(sx.lock==="x"){sx.r.style.transition="none";sx.r.style.transform="translateX("+Math.max(-88,Math.min(0,sx.base+dx))+"px)"}
+},{passive:true});
+$("flist").addEventListener("touchend",()=>{
+  if(!sx)return;const r=sx.r;r.style.transition="";
+  if(sx.lock==="x"){const m=new DOMMatrix(getComputedStyle(r).transform).m41,open=m<-44;r.classList.toggle("open",open);r.style.transform=open?"translateX(-88px)":"";lastSwipe=Date.now()}
+  sx=null;
+});
+$("flist").onclick=async e=>{
+  const d=e.target.closest("[data-d]");
+  if(d){
+    const f=cur.files[+d.dataset.d];if(!f)return;
+    const ok=await ask({title:"Delete "+f.name+"?",msg:"This file will be removed from the project.",ok:"Delete",danger:true});
+    if(ok){cur.files.splice(+d.dataset.d,1);touchProj();renderFiles()}else closeSwipes();
+    return;
+  }
+  if(Date.now()-lastSwipe<350||Date.now()-lastLP<600)return;
+  const r=e.target.closest(".fin");if(!r)return;
+  if(r.classList.contains("open")){closeSwipes();return}
+  openFile(+r.dataset.i);
+};
+
+/* tiles */
+$("tPrev").onclick=openPreview;
+$("tApk").onclick=openBuild;
+
+/* ---------- create file ---------- */
+const TYPES=[["HTML","html"],["CSS","css"],["JS","js"],["JSON","json"],["XML","xml"],["Text","txt"],["Empty File",""]];
+let crExt="html";
+$("crChips").innerHTML=TYPES.map(t=>`<button class="chip" data-x="${t[1]}">${t[0]}</button>`).join("");
+function setType(x){crExt=x;[...$("crChips").children].forEach(b=>b.classList.toggle("on",b.dataset.x===x));$("crExt").textContent=x?"."+x:""}
+$("crChips").onclick=e=>{const b=e.target.closest(".chip");if(b)setType(b.dataset.x)};
+function openCreate(){setType("html");$("crName").value="";$("crDlg").classList.add("on");$("cscrim").classList.add("on");setTimeout(()=>$("crName").focus(),300)}
+function closeCreate(){$("crDlg").classList.remove("on");if(!$("impDlg").classList.contains("on"))$("cscrim").classList.remove("on");$("crName").blur()}
+function openImp(){$("impDlg").classList.add("on");$("cscrim").classList.add("on")}
+function closeImp(){$("impDlg").classList.remove("on");if(!$("crDlg").classList.contains("on"))$("cscrim").classList.remove("on")}
+$("cscrim").onclick=()=>{closeCreate();closeImp()};
+$("crNo").onclick=closeCreate;$("impNo").onclick=closeImp;
+$("addBtn").onclick=openCreate;$("impBtn").onclick=openImp;
+function tpl(ext,name){
+  const t=name.replace(/\.\w+$/,"");
+  if(ext==="html")return `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>${esc(t)}</title>\n</head>\n<body>\n\n</body>\n</html>\n`;
+  if(ext==="css")return "/* "+t+" */\n";
+  if(ext==="js")return "// "+t+"\n";
+  if(ext==="json")return "{\n  \n}\n";
+  if(ext==="xml")return '<?xml version="1.0" encoding="UTF-8"?>\n<root>\n</root>\n';
+  return "";
+}
+const uniq=n=>{if(!cur.files.some(f=>f.name.toLowerCase()===n.toLowerCase()))return n;const d=n.lastIndexOf("."),b=d>0?n.slice(0,d):n,x=d>0?n.slice(d):"";let i=2;while(cur.files.some(f=>f.name.toLowerCase()===(b+" ("+i+")"+x).toLowerCase()))i++;return b+" ("+i+")"+x};
+$("crOk").onclick=()=>{
+  let n=$("crName").value.trim();
+  if(!n){const g=$("crName").parentElement;g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");toast("Enter a file name");return}
+  if(/[\\\/:*?"<>|]/.test(n)){toast("Invalid file name");return}
+  if(crExt&&!n.toLowerCase().endsWith("."+crExt))n+="."+crExt;
+  if(cur.files.some(f=>f.name.toLowerCase()===n.toLowerCase())){toast("That file already exists");return}
+  cur.files.push({name:n,content:tpl(extOf(n),n),mod:Date.now()});
+  touchProj();renderFiles();closeCreate();
+  const i=cur.files.length-1;setTimeout(()=>openFile(i),220);
+};
+$("crName").onkeydown=e=>{if(e.key==="Enter")$("crOk").click()};
+
+/* ---------- long press (projects & files) ---------- */
+function onLP(root,sel,fn){
+  let t=null,sp=null,fired=false;
+  const stop=()=>{clearTimeout(t);t=null};
+  root.addEventListener("pointerdown",e=>{
+    const el=e.target.closest(sel);if(!el||e.target.closest(".fdel,.get"))return;
+    stop();fired=false;sp={x:e.clientX,y:e.clientY};
+    t=setTimeout(()=>{t=null;fired=true;lastLP=Date.now();try{navigator.vibrate&&navigator.vibrate(18)}catch(_){}fn(el)},500);
+  });
+  root.addEventListener("pointermove",e=>{if(t&&sp&&Math.hypot(e.clientX-sp.x,e.clientY-sp.y)>10)stop()});
+  ["pointerup","pointercancel"].forEach(v=>root.addEventListener(v,()=>{stop();if(fired){lastLP=Date.now();fired=false}}));
+  root.addEventListener("contextmenu",e=>{if(e.target.closest(sel))e.preventDefault()});
+}
+onLP(document.querySelector(".app"),"[data-id]",async el=>{
+  const p=projects.find(x=>x.id===el.dataset.id);if(!p)return;
+  const ok=await ask({title:"Delete "+p.name+"?",msg:"This project and all its files will be permanently deleted.",ok:"Delete",danger:true});
+  if(ok){projects=projects.filter(x=>x!==p);persist();render();toast("Project deleted")}
+});
+let actI=-1;
+const closeAct=()=>{$("act").classList.remove("on");$("ascrim").classList.remove("on")};
+onLP($("flist"),".fin",el=>{
+  closeSwipes();actI=+el.dataset.i;const f=cur&&cur.files[actI];if(!f)return;
+  $("actT").textContent=f.name;$("act").classList.add("on");$("ascrim").classList.add("on");
+});
+$("actNo").onclick=closeAct;$("ascrim").addEventListener("click",closeAct);
+$("actDel").onclick=async()=>{
+  closeAct();const f=cur.files[actI];if(!f)return;
+  const ok=await ask({title:"Delete "+f.name+"?",msg:"This file will be removed from the project.",ok:"Delete",danger:true});
+  if(ok){const k=cur.files.indexOf(f);if(k>-1)cur.files.splice(k,1);touchProj();renderFiles()}
+};
+$("actRen").onclick=async()=>{
+  closeAct();const f=cur.files[actI];if(!f)return;
+  const n=await ask({title:"Rename File",msg:"Enter a new name for "+f.name,input:f.name,ok:"Rename"});
+  if(!n||n===f.name)return;
+  if(/[\\\/:*?"<>|]/.test(n)){toast("Invalid file name");return}
+  if(cur.files.some(x=>x!==f&&x.name.toLowerCase()===n.toLowerCase())){toast("That name already exists");return}
+  f.name=n;f.mod=Date.now();touchProj();renderFiles();toast("Renamed");
+};
+
+/* ---------- Build APK ---------- */
+let B={icon:null,spImg:null},building=false;
+const lum=h=>{const n=parseInt(h.slice(1),16);return((n>>16&255)*299+(n>>8&255)*587+(n&255)*114)/1000};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function pickImg(file,size,cb){
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{
+    const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d"),s=Math.min(im.width,im.height);
+    x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,size,size);cb(c.toDataURL("image/png"));
+  };im.onerror=()=>toast("Could not read that image");im.src=r.result};
+  r.readAsDataURL(file);
+}
+const appIco=s=>`<div class="aic" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.5)}px;background:${B.icon?"#fff":cur.bg}">${B.icon?`<img src="${B.icon}" alt="">`:iconOf(cur)}</div>`;
+const FAKE=["Phone","Messages","Camera","Photos","Maps","Clock","Chrome","Notes","Music","Files","Mail","Settings"];
+function refresh(){
+  if(!cur)return;
+  const nm=$("bName").value.trim()||cur.name,m=$("scr").dataset.m,on=$("bSpSw").classList.contains("on"),col=$("bSpCol").value;
+  $("bPickPrev").innerHTML=appIco(92);
+  const bg=on?col:"#fff",fg=on?(lum(col)>150?"#000":"#fff"):"#000";
+  $("lsp").style.background=bg;$("lsp").style.color=fg;
+  $("lsp").innerHTML=(on&&B.spImg?`<img class="spi" src="${B.spImg}" alt="">`:appIco(76))+(on?`<div class="sn">${esc(nm)}</div>`:"");
+  const items=FAKE.map((n,i)=>`<div class="li"><div class="fk" style="background:${PAL[i%6][0]}"></div><span>${n}</span></div>`);
+  items.splice(5,0,`<div class="li">${appIco(34)}<span>${esc(nm)}</span></div>`);
+  $("lgrid").innerHTML=items.join("");
+  $("sbr").style.color=m==="home"?"#fff":m==="splash"?fg:"#000";
+  const d=new Date();$("clk").textContent=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
+  $("bcap").textContent=m==="app"?"App preview — "+$("bHome").value:m==="splash"?(on?"Custom splash · "+$("bSpDur").value+" sec":"Splash off — default Android splash"):"Home screen after install";
+  $("bSpPick").textContent=B.spImg?"Custom image · tap to remove":"Choose";
+}
+function setMode(m){
+  $("scr").dataset.m=m;[...$("bseg").children].forEach(b=>b.classList.toggle("on",b.dataset.m===m));refresh();
+}
+$("bseg").onclick=e=>{const b=e.target.closest("button");if(b)setMode(b.dataset.m)};
+function drawBPrev(){const h=buildPreview($("bHome").value);$("bpf").srcdoc=h||'<body style="font:14px sans-serif;padding:20px;color:#888">No HTML page</body>'}
+function setSpOpt(on){const s=$("bSpSw");s.classList.toggle("on",on);s.setAttribute("aria-checked",on);$("bSpOpt").hidden=!on}
+function openBuild(){
+  if(!cur)return;
+  const htmls=cur.files.filter(f=>!f.media&&/\.html?$/i.test(f.name));
+  if(!htmls.length){toast("Add an HTML file first");return}
+  if(dirty)saveNow(true);
+  const b=cur.build||{},slug=cur.name.toLowerCase().replace(/[^a-z0-9]/g,"")||"app";
+  B={icon:b.icon||null,spImg:b.spImg||null};
+  $("bName").value=b.name||cur.name;
+  $("bPkg").value=b.pkg||"com.nfx."+(/^[a-z]/.test(slug)?slug:"app"+slug);
+  $("bVn").value=b.vn||"1.0.0";$("bVc").value=b.vc||"1";
+  $("bHome").innerHTML=htmls.map(f=>`<option value="${esc(f.name)}">${esc(f.name)}</option>`).join("");
+  const hv=htmls.some(f=>f.name===b.home)?b.home:(htmls.find(f=>f.name==="index.html")||htmls[0]).name;
+  $("bHome").value=hv;
+  $("bSpCol").value=b.spCol||"#0a84ff";$("bSpDur").value=b.spDur||"2";setSpOpt(!!b.spOn);
+  $("bscroll").scrollTop=0;setMode("app");drawBPrev();
+  show("bld",true);pushNav(closeBuild);
+}
+function closeBuild(){show("bld",false);document.activeElement&&document.activeElement.blur();setTimeout(()=>{$("bpf").srcdoc=""},500)}
+$("bBack").onclick=goBack;
+$("bPick").onclick=()=>$("fBIcon").click();
+$("fBIcon").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)pickImg(f,192,d=>{B.icon=d;refresh()})};
+$("bSpPick").onclick=()=>{if(B.spImg){B.spImg=null;refresh()}else $("fBSp").click()};
+$("fBSp").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)pickImg(f,256,d=>{B.spImg=d;refresh();setMode("splash")})};
+$("bSpSw").onclick=()=>{setSpOpt(!$("bSpSw").classList.contains("on"));refresh();if($("bSpSw").classList.contains("on"))setMode("splash")};
+["bName","bSpCol","bSpDur"].forEach(i=>$(i).addEventListener("input",refresh));
+$("bHome").onchange=()=>{drawBPrev();refresh()};
+function toApkPage(){
+  const n=stackFns.length;
+  if(hist&&n){try{history.go(-n)}catch(e){while(stackFns.length)popTop()}}else while(stackFns.length)popTop();
+  go("apk");
+}
+function bad(id,msg){const g=$(id).closest(".fr");g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");toast(msg);$(id).focus()}
+$("bBuild").onclick=async()=>{
+  if(building)return;
+  const name=$("bName").value.trim(),pkg=$("bPkg").value.trim(),vn=$("bVn").value.trim(),vcs=$("bVc").value.trim(),vc=parseInt(vcs,10);
+  if(!name)return bad("bName","Enter application name");
+  if(!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/i.test(pkg))return bad("bPkg","Invalid package (e.g. com.example.app)");
+  if(!vn)return bad("bVn","Enter version name");
+  if(!(vc>=1)||String(vc)!==vcs)return bad("bVc","Version code must be a number ≥ 1");
+  building=true;document.activeElement&&document.activeElement.blur();
+  const on=$("bSpSw").classList.contains("on");
+  cur.build={name,pkg,vn,vc:vcs,home:$("bHome").value,spOn:on,spCol:$("bSpCol").value,spDur:$("bSpDur").value,icon:B.icon,spImg:B.spImg};
+  touchProj();
+  const total=cur.files.reduce((a,f)=>a+sizeOf(f),0),size=(3.4+total/1048576*1.15).toFixed(1)+" MB";
+  const d=new Date(),entry={built:1,name,bg:cur.bg,icon:B.icon?`<img src="${B.icon}" alt="">`:iconOf(cur),ver:vn,size,date:MON[d.getMonth()]+" "+d.getDate()};
+  $("bwork").hidden=false;$("bdone").hidden=true;$("prgI").style.width="0";$("bov").classList.add("on");
+  const steps=["Packaging files…","Compiling resources…","Signing APK…","Optimizing…"];
+  for(let i=0;i<steps.length;i++){$("bstep").textContent=steps[i];$("prgI").style.width=((i+1)/steps.length*100)+"%";await sleep(700)}
+  apks.unshift(entry);saveApks();renderApks();
+  $("bwork").hidden=true;$("bdone").hidden=false;$("bdoneT").textContent=name+" v"+vn+" · "+size;
+  try{navigator.vibrate&&navigator.vibrate([20,40,20])}catch(_){}
+  await sleep(1500);
+  $("bov").classList.remove("on");building=false;
+  toApkPage();toast("APK is ready — tap Install");
+};
+
+/* ---------- import ---------- */
+$("impMedia").onclick=()=>{closeImp();$("fMedia").click()};
+$("impOther").onclick=()=>{closeImp();$("fOther").click()};
+const readAs=(f,mode)=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;mode==="text"?r.readAsText(f):r.readAsDataURL(f)});
+async function importFiles(list,media){
+  let n=0;
+  for(const f of list){
+    if(f.size>2*1048576){toast(f.name+" is too large (max 2 MB)");continue}
+    const isText=!media&&(/^text\//.test(f.type)||/\.(html?|css|js|mjs|json|txt|md|xml|svg|php|ts|csv|yml|yaml)$/i.test(f.name));
+    try{
+      const data=await readAs(f,isText?"text":"url"),name=uniq(f.name);
+      cur.files.push(isText?{name,content:data,mod:Date.now()}:{name,media:true,data,size:f.size,mod:Date.now()});n++;
+    }catch(e){toast("Could not read "+f.name)}
+  }
+  if(n){touchProj();renderFiles();toast(n+(n>1?" files":" file")+" imported")}
+}
+$("fMedia").onchange=e=>{const l=[...e.target.files];e.target.value="";if(l.length)importFiles(l,true)};
+$("fOther").onchange=e=>{const l=[...e.target.files];e.target.value="";if(l.length)importFiles(l,false)};
+
+/* ---------- syntax highlighting ---------- */
+const KW=new Set("const let var function return if else for while do switch case break continue new this class extends import export from default async await try catch finally throw typeof instanceof in of null undefined true false void delete static super yield".split(" "));
+const w=(c,s)=>`<span class="h-${c}">${esc(s)}</span>`;
+function tok(src,re,fn){let out="",last=0,m;re.lastIndex=0;while((m=re.exec(src))){if(m.index>last)out+=esc(src.slice(last,m.index));out+=fn(m);last=re.lastIndex;if(m[0]==="")re.lastIndex++}return out+esc(src.slice(last))}
+const jsHl=s=>tok(s,/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\[\s\S])*`)|(\b\d+\.?\d*\b)|(\b[A-Za-z_$][\w$]*\b)/g,m=>m[1]?w("c",m[0]):m[2]?w("s",m[0]):m[3]?w("n",m[0]):KW.has(m[4])?w("k",m[4]):esc(m[0]));
+const cssHl=s=>tok(s,/(\/\*[\s\S]*?\*\/)|("[^"\n]*"|'[^'\n]*')|(#[0-9a-fA-F]{3,8}\b|-?\b\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms|deg|fr)?)|([\w-]+(?=\s*:))|(@[\w-]+)/g,m=>m[1]?w("c",m[0]):m[2]?w("s",m[0]):m[3]?w("n",m[0]):m[4]?w("a",m[0]):w("k",m[0]));
+const tagHl=s=>tok(s,/(<\/?[\w:-]+)|("[^"]*"|'[^']*')|([\w:-]+(?==))|(\/?>)/g,m=>m[1]?w("t",m[0]):m[2]?w("s",m[0]):m[3]?w("a",m[0]):w("t",m[0]));
+const htmlHl=s=>tok(s,/(<!--[\s\S]*?-->)|(<(script|style)\b[^>]*>)([\s\S]*?)(<\/\3>)|(<\/?[A-Za-z][^>]*>?)/gi,m=>m[1]?w("c",m[0]):m[2]?tagHl(m[2])+(m[3].toLowerCase()==="script"?jsHl(m[4]):cssHl(m[4]))+tagHl(m[5]):tagHl(m[6]));
+function highlight(src,ext){
+  if(src.length>400000)return esc(src);
+  if(ext==="html"||ext==="htm"||ext==="xml"||ext==="svg"||ext==="php")return htmlHl(src);
+  if(ext==="css")return cssHl(src);
+  if(ext==="js"||ext==="mjs"||ext==="json"||ext==="ts")return jsHl(src);
+  return esc(src);
+}
+
+/* ---------- file editor ---------- */
+function openFile(i){
+  const f=cur.files[i];if(!f)return;
+  if(f.media){toast(f.name+" is a media file");return}
+  fi=i;drawFTabs();loadFile();show("fed",true);pushNav(closeFile);
+}
+function closeFile(){if(dirty)saveNow(true);show("fed",false);document.activeElement&&document.activeElement.blur();renderFiles()}
+$("fBack").onclick=goBack;
+function drawFTabs(){
+  $("ftabs").innerHTML=cur.files.map((f,i)=>f.media?"":`<button class="tab ${i===fi?"on":""}" data-i="${i}"><i style="background:${dot(f.name)}"></i>${esc(f.name)}</button>`).join("");
+  const on=$("ftabs").querySelector(".tab.on");if(on)on.scrollIntoView({inline:"center",block:"nearest"});
+}
+$("ftabs").onclick=e=>{const t=e.target.closest(".tab");if(!t)return;if(dirty)saveNow(true);fi=+t.dataset.i;drawFTabs();loadFile()};
+function loadFile(){
+  const f=cur.files[fi];$("code").value=f.content;$("fTitle").textContent=f.name;
+  lastN=0;paint();$("code").scrollTop=0;$("code").scrollLeft=0;syncScroll();pos();
+  dirty=false;$("svBtn").classList.remove("on");
+}
+function paint(){
+  const f=cur.files[fi];if(!f)return;const v=$("code").value;
+  $("hl").innerHTML=highlight(v,extOf(f.name))+"\n";
+  const n=v.split("\n").length;
+  if(n!==lastN){lastN=n;$("gnum").textContent=Array.from({length:n},(_,i)=>i+1).join("\n");$("gut").style.width="calc("+Math.max(2,String(n).length)+"ch + 20px)"}
+}
+function paintSoon(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;paint()})}
+function syncScroll(){const c=$("code"),x=-c.scrollLeft,y=-c.scrollTop;$("hl").style.transform="translate("+x+"px,"+y+"px)";$("gnum").style.transform="translateY("+y+"px)"}
+function pos(){const c=$("code"),v=c.value.slice(0,c.selectionStart);$("fPos").textContent="Ln "+v.split("\n").length+", Col "+(v.length-v.lastIndexOf("\n"))}
+function markDirty(){dirty=true;$("svBtn").classList.add("on");clearTimeout(saveT2);saveT2=setTimeout(()=>saveNow(true),1200)}
+function saveNow(silent){clearTimeout(saveT2);const f=cur&&cur.files[fi];if(f)f.mod=Date.now();if(cur)touchProj();dirty=false;$("svBtn").classList.remove("on");if(!silent)toast("Saved")}
+$("code").addEventListener("input",()=>{const f=cur.files[fi];if(!f)return;f.content=$("code").value;paintSoon();syncScroll();pos();markDirty()});
+$("code").addEventListener("scroll",syncScroll,{passive:true});
+$("code").addEventListener("keyup",pos);$("code").addEventListener("click",pos);
+document.addEventListener("selectionchange",()=>{if(document.activeElement===$("code"))pos()});
+$("code").addEventListener("keydown",e=>{if(e.key==="Tab"){e.preventDefault();ins("  ")}});
+function ins(t){const c=$("code");c.focus();if(!document.execCommand("insertText",false,t)){c.setRangeText(t,c.selectionStart,c.selectionEnd,"end");c.dispatchEvent(new Event("input"))}}
+$("uBtn").onclick=()=>{$("code").focus();document.execCommand("undo")};
+$("rBtn").onclick=()=>{$("code").focus();document.execCommand("redo")};
+$("svBtn").onclick=()=>saveNow(false);
+const KEYS=[["Tab","  "],["<","<"],[">",">"],["/","/"],["{","{"],["}","}"],["[","["],["]","]"],["(","("],[")",")"],['"','"'],["'","'"],[";",";"],[":",":"],["=","="],["#","#"],[".","."]];
+$("keys").innerHTML=KEYS.map((k,i)=>`<button class="k press" data-i="${i}">${esc(k[0])}</button>`).join("");
+$("keys").onmousedown=e=>e.preventDefault();
+$("keys").onclick=e=>{const b=e.target.closest(".k");if(b)ins(KEYS[+b.dataset.i][1])};
+$("runBtn").onclick=openPreview;
+
+/* ---------- preview ---------- */
+function buildPreview(home){
+  const get=n=>cur.files.find(f=>f.name===n.replace(/^\.\//,"")&&!f.media);
+  const idx=(home&&get(home))||get("index.html")||cur.files.find(f=>/\.html?$/i.test(f.name)&&!f.media);
+  if(!idx)return null;
+  let h=idx.content;
+  h=h.replace(/<link[^>]*href=["']([^"']+)["'][^>]*>/gi,(m,u)=>{const f=get(u);return f&&/\.css$/i.test(u)?"<style>"+f.content+"</style>":m});
+  h=h.replace(/<script([^>]*?)src=["']([^"']+)["']([^>]*)>\s*<\/script>/gi,(m,a,u,b)=>{const f=get(u);return f?"<script"+a+b+">"+f.content.replace(/<\/script/gi,"<\\/script")+"<\/script>":m});
+  cur.files.filter(f=>f.media).forEach(f=>{h=h.split('"'+f.name+'"').join('"'+f.data+'"').split("'"+f.name+"'").join("'"+f.data+"'")});
+  return h;
+}
+function openPreview(){
+  if(!cur)return;if(dirty)saveNow(true);
+  const h=buildPreview();if(!h){toast("Add an index.html to preview");return}
+  const fr=document.createElement("iframe");fr.id="pf";fr.title="Preview";fr.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");fr.srcdoc=h;$("pfw").replaceChildren(fr);show("prev",true);pushNav(closePreview);
+}
+function closePreview(){show("prev",false);setTimeout(()=>{$("pfw").replaceChildren()},500)}
+$("pvBack").onclick=goBack;
+
+</script>
+</body>
+</html>
